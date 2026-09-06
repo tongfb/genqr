@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6d28d9" />
+    <meta name="description" content="สร้าง QR Code ฟรีบนเบราว์เซอร์ ไม่อัปโหลดข้อมูลหรือโลโก้ขึ้นเซิร์ฟเวอร์" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>ZAPM GENQR — Free Static QR Generator</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="ZAPM GENQR หน้าหลัก">
+        <img src="/assets/logo.svg" alt="" width="42" height="42" />
+        <span><strong data-config="appName">ZAPM GENQR</strong><small data-config="tagline">Free Static QR Generator</small></span>
+      </a>
+      <span class="privacy-pill"><span aria-hidden="true">●</span> ทำงานในเครื่องคุณ</span>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <p class="eyebrow">ฟรี • ไม่ติดตาม • ไม่หมดอายุ</p>
+        <h1 id="hero-title">สร้าง QR Code ได้ทันที<br /><span>ข้อมูลไม่ออกจากเครื่อง</span></h1>
+        <p>กรอกข้อมูล ปรับแต่ง แล้วดาวน์โหลดเป็น PNG หรือ SVG — ไม่มีสมาชิก ไม่มีโฆษณา และไม่มีฐานข้อมูล</p>
+      </section>
+
+      <section class="generator" aria-label="เครื่องมือสร้าง QR Code">
+        <div class="editor-panel">
+          <div class="section-heading">
+            <div><span class="step">1</span><h2>เลือกประเภทข้อมูล</h2></div>
+            <button class="text-button" id="reset-button" type="button">เริ่มใหม่</button>
+          </div>
+
+          <div class="type-tabs" id="type-tabs" role="tablist" aria-label="ประเภท QR Code"></div>
+
+          <form id="qr-form" novalidate>
+            <div id="dynamic-fields" class="fields-grid"></div>
+            <p id="form-error" class="form-error" role="alert" aria-live="polite"></p>
+          </form>
+
+          <details class="customizer" open>
+            <summary><span><span class="step">2</span>ปรับแต่งหน้าตา</span><span class="summary-hint">สี ขนาด และโลโก้</span></summary>
+            <div class="customizer-body">
+              <div class="control-row two-columns">
+                <label>สี QR
+                  <span class="color-control"><input id="qr-color" type="color" value="#111827" /><input id="qr-color-text" type="text" value="#111827" maxlength="7" aria-label="รหัสสี QR" /></span>
+                </label>
+                <label>พื้นหลัง
+                  <select id="background-mode">
+                    <option value="white">สีขาว</option>
+                    <option value="color">เลือกสี</option>
+                    <option value="transparent">โปร่งใส</option>
+                  </select>
+                </label>
+              </div>
+              <div class="control-row two-columns" id="background-color-row" hidden>
+                <label>สีพื้นหลัง
+                  <span class="color-control"><input id="background-color" type="color" value="#ffffff" /><input id="background-color-text" type="text" value="#ffffff" maxlength="7" aria-label="รหัสสีพื้นหลัง" /></span>
+                </label>
+              </div>
+              <div class="control-row two-columns">
+                <label>รูปแบบลาย
+                  <select id="dot-style">
+                    <option value="square">เหลี่ยมมาตรฐาน</option>
+                    <option value="rounded">ขอบมน</option>
+                    <option value="dots">จุดกลม</option>
+                    <option value="classy-rounded">โค้งสวย</option>
+                  </select>
+                </label>
+                <label>ความทนต่อความเสียหาย
+                  <select id="error-level">
+                    <option value="L">L — ข้อมูลน้อย</option>
+                    <option value="M" selected>M — มาตรฐาน</option>
+                    <option value="Q">Q — สูง</option>
+                    <option value="H">H — สูงสุด / เหมาะกับโลโก้</option>
+                  </select>
+                </label>
+              </div>
+              <label class="range-label" for="qr-size"><span>ขนาดไฟล์</span><output id="qr-size-output">512 px</output></label>
+              <input id="qr-size" type="range" min="256" max="1200" step="32" value="512" />
+
+              <div class="logo-box">
+                <div>
+                  <strong>โลโก้ตรงกลาง (ไม่บังคับ)</strong>
+                  <small>PNG, JPG หรือ SVG ไม่เกิน 2 MB — อ่านจากเครื่องเท่านั้น</small>
+                </div>
+                <label class="file-button" for="logo-input">เลือกโลโก้</label>
+                <input id="logo-input" type="file" accept="image/png,image/jpeg,image/svg+xml" hidden />
+                <div class="logo-status" id="logo-status" hidden>
+                  <img id="logo-thumbnail" alt="ตัวอย่างโลโก้" />
+                  <span id="logo-name"></span>
+                  <button id="remove-logo" type="button" class="text-button danger">เอาออก</button>
+                </div>
+                <div id="logo-controls" hidden>
+                  <label class="range-label" for="logo-size"><span>ขนาดโลโก้</span><output id="logo-size-output">20%</output></label>
+                  <input id="logo-size" type="range" min="10" max="35" value="20" />
+                  <label class="range-label" for="logo-padding"><span>พื้นที่ว่างรอบโลโก้</span><output id="logo-padding-output">8 px</output></label>
+                  <input id="logo-padding" type="range" min="0" max="32" value="8" />
+                  <p id="logo-warning" class="warning" hidden>โลโก้ขนาดใหญ่อาจทำให้สแกนยาก ควรทดสอบก่อนใช้งานจริง</p>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <aside class="preview-panel" aria-labelledby="preview-title">
+          <div class="preview-heading"><span class="step">3</span><h2 id="preview-title">ตัวอย่างพร้อมใช้</h2></div>
+          <div class="qr-stage" id="qr-stage"><div id="qr-preview" aria-label="ตัวอย่าง QR Code"></div></div>
+          <p class="scan-hint"><span aria-hidden="true">⌗</span> ลองสแกนด้วยมือถือก่อนนำไปใช้จริง</p>
+          <div class="download-actions">
+            <button type="button" id="download-png" class="primary-button">ดาวน์โหลด PNG</button>
+            <button type="button" id="download-svg" class="secondary-button">ดาวน์โหลด SVG</button>
+          </div>
+          <p class="payload-label">ข้อมูลที่จะอยู่ใน QR</p>
+          <pre id="payload-preview"></pre>
+        </aside>
+      </section>
+
+      <section class="trust-grid" aria-label="จุดเด่น">
+        <article><span>◉</span><div><h3>เป็นส่วนตัว</h3><p>ข้อมูลและโลโก้ประมวลผลในเบราว์เซอร์ ไม่มีการส่งขึ้นเซิร์ฟเวอร์</p></div></article>
+        <article><span>∞</span><div><h3>Static ไม่หมดอายุ</h3><p>QR เก็บข้อมูลไว้โดยตรง จึงไม่พึ่งลิงก์เปลี่ยนทางหรือค่ารายเดือน</p></div></article>
+        <article><span>↗</span><div><h3>พร้อมงานพิมพ์</h3><p>ดาวน์โหลด SVG เพื่อขยายได้โดยภาพไม่แตก หรือ PNG ความละเอียดสูง</p></div></article>
+      </section>
+    </main>
+
+    <footer>
+      <p><strong data-config="appName">ZAPM GENQR</strong> — สร้างมาให้ใช้ฟรีและดูแลต่อได้ง่าย</p>
+      <p>โปรดตรวจสอบข้อมูลการชำระเงินและทดลองสแกนทุกครั้งก่อนเผยแพร่</p>
+    </footer>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>
