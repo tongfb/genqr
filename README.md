@@ -6,7 +6,7 @@
 
 ## ความสามารถ
 
-- สร้าง QR สำหรับ URL, ข้อความ, Wi‑Fi, vCard, Email, Phone, SMS และ WhatsApp
+- สร้าง QR สำหรับ URL, ข้อความ, Wi‑Fi, vCard, Email, Phone และ WhatsApp
 - สร้าง PromptPay ตามโครง Thai QR Payment พร้อม CRC16 checksum และจำนวนเงินแบบไม่บังคับ
 - สร้าง Bitcoin URI และ Lightning Address / LNURL
 - เลือกสี ลาย พื้นขาว พื้นสี หรือพื้นโปร่งใส

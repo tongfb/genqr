@@ -3,7 +3,7 @@ export const APP_CONFIG = Object.freeze({
   tagline: "Free Static QR Generator",
   brandName: "ZAPM",
   domain: "genqr.zapm.uk",
-  repositoryUrl: "",
+  repositoryUrl: "https://github.com/tongfb/genqr",
   defaultQrColor: "#111827",
   defaultBackgroundColor: "#ffffff",
   defaultSize: 512,
