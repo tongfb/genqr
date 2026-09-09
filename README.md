@@ -48,6 +48,7 @@ export const APP_CONFIG = Object.freeze({
   brandName: "YOUR BRAND",
   domain: "qr.example.com",
   repositoryUrl: "https://github.com/your-name/your-repo",
+  lightningDonationAddress: "your-name@example.com",
   defaultQrColor: "#111827",
   defaultBackgroundColor: "#ffffff",
   defaultSize: 512,

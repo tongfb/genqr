@@ -4,6 +4,7 @@ export const APP_CONFIG = Object.freeze({
   brandName: "ZAPM",
   domain: "genqr.zapm.uk",
   repositoryUrl: "https://github.com/tongfb/genqr",
+  lightningDonationAddress: "donate@zapm.uk",
   defaultQrColor: "#1a1a1a",
   defaultBackgroundColor: "#ffffff",
   defaultSize: 512,

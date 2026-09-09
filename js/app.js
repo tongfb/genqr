@@ -33,6 +33,8 @@ const elements = {
   reset: document.querySelector("#reset-button"),
   downloadPng: document.querySelector("#download-png"),
   downloadSvg: document.querySelector("#download-svg"),
+  openLightningWallet: document.querySelector("#open-lightning-wallet"),
+  copyLightningAddress: document.querySelector("#copy-lightning-address"),
   toast: document.querySelector("#toast")
 };
 
@@ -49,6 +51,7 @@ document.querySelectorAll("[data-config]").forEach((node) => {
   if (key in APP_CONFIG) node.textContent = APP_CONFIG[key];
 });
 document.title = `${APP_CONFIG.appName} — ${APP_CONFIG.tagline}`;
+elements.openLightningWallet.href = `lightning:${APP_CONFIG.lightningDonationAddress}`;
 elements.qrColor.value = APP_CONFIG.defaultQrColor;
 elements.qrColorText.value = APP_CONFIG.defaultQrColor;
 elements.backgroundColor.value = APP_CONFIG.defaultBackgroundColor;
@@ -308,6 +311,14 @@ async function download(extension) {
 
 elements.downloadPng.addEventListener("click", () => download("png"));
 elements.downloadSvg.addEventListener("click", () => download("svg"));
+elements.copyLightningAddress.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(APP_CONFIG.lightningDonationAddress);
+    showToast(`คัดลอก ${APP_CONFIG.lightningDonationAddress} แล้ว`);
+  } catch {
+    showToast("คัดลอกไม่สำเร็จ กรุณาคัดลอก address ด้วยตนเอง");
+  }
+});
 syncColor(elements.qrColor, elements.qrColorText);
 syncColor(elements.backgroundColor, elements.backgroundColorText);
 
