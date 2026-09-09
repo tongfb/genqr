@@ -33,6 +33,7 @@ const elements = {
   reset: document.querySelector("#reset-button"),
   downloadPng: document.querySelector("#download-png"),
   downloadSvg: document.querySelector("#download-svg"),
+  mobileSaveHint: document.querySelector("#mobile-save-hint"),
   openLightningWallet: document.querySelector("#open-lightning-wallet"),
   copyLightningAddress: document.querySelector("#copy-lightning-address"),
   toast: document.querySelector("#toast")
@@ -57,6 +58,15 @@ elements.qrColorText.value = APP_CONFIG.defaultQrColor;
 elements.backgroundColor.value = APP_CONFIG.defaultBackgroundColor;
 elements.backgroundColorText.value = APP_CONFIG.defaultBackgroundColor;
 elements.qrSize.value = APP_CONFIG.defaultSize;
+
+const isAppleMobile = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+if (isAppleMobile && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
+  elements.downloadPng.textContent = "บันทึก PNG ลงรูปภาพ";
+  elements.downloadSvg.textContent = "ดาวน์โหลด SVG (Files)";
+  elements.mobileSaveHint.hidden = false;
+}
 
 function renderTabs() {
   elements.tabs.replaceChildren(...QR_TYPES.map((type) => {
@@ -302,6 +312,17 @@ async function download(extension) {
     return;
   }
   try {
+    if (extension === "png" && isAppleMobile && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
+      const file = await renderer.getFile(extension, APP_CONFIG.downloadFileName);
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: `${APP_CONFIG.appName} QR Code` });
+          return;
+        } catch (error) {
+          if (error instanceof DOMException && error.name === "AbortError") return;
+        }
+      }
+    }
     await renderer.download(extension, APP_CONFIG.downloadFileName);
     showToast(`ดาวน์โหลด ${extension.toUpperCase()} แล้ว`);
   } catch {

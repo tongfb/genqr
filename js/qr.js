@@ -38,4 +38,10 @@ export class QrRenderer {
   download(extension, fileName) {
     return this.qr.download({ name: fileName, extension });
   }
+
+  async getFile(extension, fileName) {
+    const blob = await this.qr.getRawData(extension);
+    if (!(blob instanceof Blob)) throw new Error("สร้างไฟล์ไม่สำเร็จ");
+    return new File([blob], `${fileName}.${extension}`, { type: blob.type });
+  }
 }
