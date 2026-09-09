@@ -6,9 +6,7 @@ const required = (value, label) => {
   return text;
 };
 
-const escapeWifi = (value) => String(value ?? "").replace(/([\\;,:"])/g, "\\$1");
 const escapeVCard = (value) => String(value ?? "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
-const digitsOnly = (value) => String(value ?? "").replace(/\D/g, "");
 
 export const QR_TYPES = [
   {
@@ -26,20 +24,6 @@ export const QR_TYPES = [
     id: "text", label: "ข้อความ", icon: "T", description: "ข้อความทั่วไป",
     fields: [{ name: "text", label: "ข้อความ", type: "textarea", placeholder: "พิมพ์ข้อความที่ต้องการ...", full: true, maxLength: 2000 }],
     build: ({ text }) => required(text, "ข้อความ")
-  },
-  {
-    id: "wifi", label: "Wi‑Fi", icon: "⌁", description: "เชื่อมต่อ Wi-Fi",
-    fields: [
-      { name: "ssid", label: "ชื่อเครือข่าย (SSID)", type: "text", placeholder: "My Wi-Fi", full: true },
-      { name: "security", label: "การเข้ารหัส", type: "select", value: "WPA", options: [["WPA", "WPA / WPA2 / WPA3"], ["WEP", "WEP"], ["nopass", "ไม่มีรหัสผ่าน"]] },
-      { name: "password", label: "รหัสผ่าน", type: "text", placeholder: "รหัสผ่าน Wi-Fi" },
-      { name: "hidden", label: "เครือข่ายซ่อนอยู่", type: "select", value: "false", options: [["false", "ไม่ซ่อน"], ["true", "ซ่อนอยู่"]], full: true }
-    ],
-    build: ({ ssid, security, password, hidden }) => {
-      const name = required(ssid, "ชื่อเครือข่าย");
-      if (security !== "nopass") required(password, "รหัสผ่าน");
-      return `WIFI:T:${security};S:${escapeWifi(name)};P:${security === "nopass" ? "" : escapeWifi(password)};H:${hidden === "true" ? "true" : "false"};;`;
-    }
   },
   {
     id: "vcard", label: "รายชื่อ", icon: "◉", description: "Contact / vCard",
@@ -84,18 +68,6 @@ export const QR_TYPES = [
     id: "phone", label: "โทรศัพท์", icon: "☎", description: "โทรออก",
     fields: [{ name: "phone", label: "หมายเลขโทรศัพท์", type: "tel", placeholder: "+66 81 234 5678", full: true }],
     build: ({ phone }) => `tel:${required(phone, "หมายเลขโทรศัพท์").replace(/\s/g, "")}`
-  },
-  {
-    id: "whatsapp", label: "WhatsApp", icon: "◌", description: "เปิดแชต WhatsApp",
-    fields: [
-      { name: "phone", label: "เบอร์พร้อมรหัสประเทศ", type: "tel", placeholder: "66812345678", help: "ใส่รหัสประเทศและไม่ต้องใส่เครื่องหมาย +", full: true },
-      { name: "message", label: "ข้อความเริ่มต้น", type: "textarea", placeholder: "สวัสดีครับ", full: true }
-    ],
-    build: (v) => {
-      const phone = digitsOnly(required(v.phone, "หมายเลข WhatsApp"));
-      if (phone.length < 8 || phone.length > 15) throw new Error("หมายเลข WhatsApp ต้องมี 8–15 หลักรวมรหัสประเทศ");
-      return `https://wa.me/${phone}${v.message ? `?text=${encodeURIComponent(v.message)}` : ""}`;
-    }
   },
   {
     id: "promptpay", label: "PromptPay", icon: "฿", description: "Thai QR Payment",
