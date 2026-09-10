@@ -19,17 +19,6 @@ const elements = {
   errorLevel: document.querySelector("#error-level"),
   qrSize: document.querySelector("#qr-size"),
   qrSizeOutput: document.querySelector("#qr-size-output"),
-  logoInput: document.querySelector("#logo-input"),
-  logoStatus: document.querySelector("#logo-status"),
-  logoThumbnail: document.querySelector("#logo-thumbnail"),
-  logoName: document.querySelector("#logo-name"),
-  logoControls: document.querySelector("#logo-controls"),
-  logoSize: document.querySelector("#logo-size"),
-  logoSizeOutput: document.querySelector("#logo-size-output"),
-  logoPadding: document.querySelector("#logo-padding"),
-  logoPaddingOutput: document.querySelector("#logo-padding-output"),
-  logoWarning: document.querySelector("#logo-warning"),
-  removeLogo: document.querySelector("#remove-logo"),
   reset: document.querySelector("#reset-button"),
   downloadPng: document.querySelector("#download-png"),
   downloadSvg: document.querySelector("#download-svg"),
@@ -41,7 +30,6 @@ const elements = {
 
 const state = {
   activeType: "url",
-  logo: "",
   valid: true,
   frame: 0,
   toastTimer: 0
@@ -153,10 +141,7 @@ function getOptions(data) {
     qrColor: elements.qrColor.value,
     backgroundColor: getBackgroundColor(),
     dotStyle: elements.dotStyle.value,
-    errorLevel: elements.errorLevel.value,
-    logo: state.logo,
-    logoSize: Number(elements.logoSize.value),
-    logoPadding: Number(elements.logoPadding.value)
+    errorLevel: elements.errorLevel.value
   };
 }
 
@@ -186,45 +171,6 @@ function showToast(message) {
   elements.toast.textContent = message;
   elements.toast.classList.add("show");
   state.toastTimer = window.setTimeout(() => elements.toast.classList.remove("show"), 2400);
-}
-
-function setLogo(file) {
-  const allowedTypes = ["image/png", "image/jpeg", "image/svg+xml"];
-  if (!allowedTypes.includes(file.type)) {
-    showToast("รองรับเฉพาะไฟล์ PNG, JPG และ SVG");
-    elements.logoInput.value = "";
-    return;
-  }
-  if (file.size > APP_CONFIG.maxLogoBytes) {
-    showToast("ไฟล์โลโก้ต้องมีขนาดไม่เกิน 2 MB");
-    elements.logoInput.value = "";
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.addEventListener("load", () => {
-    state.logo = String(reader.result);
-    elements.logoThumbnail.src = state.logo;
-    elements.logoName.textContent = file.name;
-    elements.logoStatus.hidden = false;
-    elements.logoControls.hidden = false;
-    elements.errorLevel.value = "H";
-    elements.errorLevel.disabled = true;
-    validateAndRender();
-    showToast("เพิ่มโลโก้แล้ว และปรับความทนเป็นระดับสูงสุด");
-  });
-  reader.readAsDataURL(file);
-}
-
-function clearLogo() {
-  state.logo = "";
-  elements.logoInput.value = "";
-  elements.logoThumbnail.removeAttribute("src");
-  elements.logoStatus.hidden = true;
-  elements.logoControls.hidden = true;
-  elements.errorLevel.disabled = false;
-  elements.errorLevel.value = "M";
-  validateAndRender();
 }
 
 function syncColor(colorInput, textInput) {
@@ -273,23 +219,9 @@ elements.qrSize.addEventListener("input", () => {
   elements.qrSizeOutput.value = `${elements.qrSize.value} px`;
   validateAndRender();
 });
-elements.logoSize.addEventListener("input", () => {
-  elements.logoSizeOutput.value = `${elements.logoSize.value}%`;
-  elements.logoWarning.hidden = Number(elements.logoSize.value) <= 25;
-  validateAndRender();
-});
-elements.logoPadding.addEventListener("input", () => {
-  elements.logoPaddingOutput.value = `${elements.logoPadding.value} px`;
-  validateAndRender();
-});
-elements.logoInput.addEventListener("change", () => {
-  if (elements.logoInput.files?.[0]) setLogo(elements.logoInput.files[0]);
-});
-elements.removeLogo.addEventListener("click", clearLogo);
 
 elements.reset.addEventListener("click", () => {
   state.activeType = "url";
-  clearLogo();
   elements.qrColor.value = APP_CONFIG.defaultQrColor;
   elements.qrColorText.value = APP_CONFIG.defaultQrColor;
   elements.backgroundMode.value = "white";
@@ -297,6 +229,8 @@ elements.reset.addEventListener("click", () => {
   elements.backgroundColor.value = APP_CONFIG.defaultBackgroundColor;
   elements.backgroundColorText.value = APP_CONFIG.defaultBackgroundColor;
   elements.dotStyle.value = "square";
+  elements.errorLevel.disabled = false;
+  elements.errorLevel.value = "M";
   elements.qrSize.value = APP_CONFIG.defaultSize;
   elements.qrSizeOutput.value = `${APP_CONFIG.defaultSize} px`;
   renderTabs();
