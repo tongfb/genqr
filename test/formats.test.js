@@ -29,8 +29,13 @@ test("builds standard communication links", () => {
   assert.equal(build("email", { email: "hello@example.com", subject: "Hi", body: "Test" }), "mailto:hello@example.com?subject=Hi&body=Test");
 });
 
-test("builds Bitcoin and Lightning URIs", () => {
-  assert.equal(build("bitcoin", { address: "bc1qtest", amount: "0.1", label: "Tip", message: "" }), "bitcoin:bc1qtest?amount=0.1&label=Tip");
+test("builds validated Bitcoin and Lightning URIs", () => {
+  const bitcoinAddress = "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4";
+  assert.equal(
+    build("bitcoin", { address: bitcoinAddress, amount: "0.00000001", label: "Coffee shop", message: "Order #123" }),
+    `bitcoin:${bitcoinAddress}?amount=0.00000001&label=Coffee%20shop&message=Order%20%23123`
+  );
+  assert.throws(() => build("bitcoin", { address: "bc1qtest", amount: "0.1", label: "", message: "" }), /ไม่ถูกต้อง/);
   assert.equal(build("lightning", { kind: "address", value: "name@example.com" }), "lightning:name@example.com");
   assert.equal(build("lightning", { kind: "lnurl", value: "LNURL1TEST" }), "lightning:LNURL1TEST");
 });
