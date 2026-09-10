@@ -8,26 +8,17 @@ export class QrRenderer {
   }
 
   toLibraryOptions(options) {
-    const hasLogo = Boolean(options.logo);
     return {
       width: options.size,
       height: options.size,
       type: "svg",
       data: options.data,
-      image: options.logo || undefined,
       margin: Math.max(12, Math.round(options.size * 0.04)),
-      qrOptions: { errorCorrectionLevel: hasLogo ? "H" : options.errorLevel },
+      qrOptions: { errorCorrectionLevel: options.errorLevel },
       dotsOptions: { color: options.qrColor, type: options.dotStyle },
       cornersSquareOptions: { color: options.qrColor, type: options.dotStyle === "dots" ? "dot" : "extra-rounded" },
       cornersDotOptions: { color: options.qrColor, type: options.dotStyle === "square" ? "square" : "dot" },
-      backgroundOptions: { color: options.backgroundColor },
-      imageOptions: {
-        hideBackgroundDots: true,
-        imageSize: options.logoSize / 100,
-        margin: options.logoPadding,
-        crossOrigin: "anonymous",
-        saveAsBlob: true
-      }
+      backgroundOptions: { color: options.backgroundColor }
     };
   }
 
