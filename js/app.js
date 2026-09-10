@@ -50,9 +50,13 @@ elements.qrSize.value = APP_CONFIG.defaultSize;
 const isAppleMobile = /iPad|iPhone|iPod/.test(navigator.userAgent)
   || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-if (isAppleMobile && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
+const canUseAppleShareSheet = isAppleMobile
+  && typeof navigator.share === "function"
+  && typeof navigator.canShare === "function";
+
+if (canUseAppleShareSheet) {
   elements.downloadPng.textContent = "บันทึก PNG ลงรูปภาพ";
-  elements.downloadSvg.textContent = "ดาวน์โหลด SVG (Files)";
+  elements.downloadSvg.textContent = "บันทึก SVG ลง Files";
   elements.mobileSaveHint.hidden = false;
 }
 
@@ -246,7 +250,7 @@ async function download(extension) {
     return;
   }
   try {
-    if (extension === "png" && isAppleMobile && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
+    if (canUseAppleShareSheet && (extension === "png" || extension === "svg")) {
       const file = await renderer.getFile(extension, APP_CONFIG.downloadFileName);
       if (navigator.canShare({ files: [file] })) {
         try {
