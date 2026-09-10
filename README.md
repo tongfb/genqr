@@ -1,6 +1,6 @@
 # ZAPM GENQR
 
-เครื่องมือสร้าง Static QR Code ฟรี ทำงานทั้งหมดในเบราว์เซอร์ของผู้ใช้ ไม่มีระบบสมาชิก ไม่มีฐานข้อมูล และไม่อัปโหลดข้อมูลหรือโลโก้ไปยังเซิร์ฟเวอร์
+เครื่องมือสร้าง Static QR Code ฟรี ทำงานทั้งหมดในเบราว์เซอร์ของผู้ใช้ ไม่มีระบบสมาชิก ไม่มีฐานข้อมูล และไม่ส่งข้อมูลที่กรอกไปยังเซิร์ฟเวอร์
 
 เว็บไซต์เป้าหมาย: `https://genqr.zapm.uk`
 
@@ -11,14 +11,15 @@
 - สร้าง Bitcoin URI และ Lightning Address / LNURL
 - เลือกสี ลาย พื้นขาว พื้นสี หรือพื้นโปร่งใส
 - เลือกขนาด 256–1,200 px และระดับ Error Correction
-- ใส่โลโก้ PNG, JPG หรือ SVG ไม่เกิน 2 MB พร้อมปรับขนาดและ padding
 - ดาวน์โหลด PNG หรือ SVG
 - บน iPhone/iPad ปุ่ม PNG เปิดเมนูแชร์เพื่อเลือกบันทึกรูปภาพลง Photos ส่วน SVG ดาวน์โหลดไปยัง Files
 - รองรับมือถือ คีย์บอร์ด และ reduced motion
 
+> เวอร์ชันปัจจุบันตั้งใจให้ระบบเรียบง่ายและเสถียร จึงยังไม่มีฟังก์ชันใส่โลโก้ลงกลาง QR สามารถเพิ่มกลับมาได้ภายหลังเมื่อมีวิธีที่ทดสอบข้ามเบราว์เซอร์ได้มั่นคงพอ
+
 ## หลักความเป็นส่วนตัว
 
-โค้ดไม่มี API, Analytics, cookie, Worker, D1 หรือ R2 ข้อมูลที่กรอกและไฟล์โลโก้จึงอยู่ในแท็บเบราว์เซอร์เท่านั้น เมื่อปิดหรือรีเฟรชหน้า ข้อมูลจะหายไป นโยบาย Content Security Policy ยังปิดการเชื่อมต่อออกจากหน้าเว็บไว้ด้วย
+โค้ดไม่มี API, Analytics, cookie, Worker, D1 หรือ R2 ข้อมูลที่กรอกจึงอยู่ในแท็บเบราว์เซอร์เท่านั้น เมื่อปิดหรือรีเฟรชหน้า ข้อมูลจะหายไป นโยบาย Content Security Policy ยังปิดการเชื่อมต่อออกจากหน้าเว็บไว้ด้วย
 
 ## เปิดทดสอบในเครื่อง
 
@@ -53,7 +54,6 @@ export const APP_CONFIG = Object.freeze({
   defaultQrColor: "#111827",
   defaultBackgroundColor: "#ffffff",
   defaultSize: 512,
-  maxLogoBytes: 2 * 1024 * 1024,
   downloadFileName: "my-qr-code"
 });
 ```
@@ -77,11 +77,9 @@ Cloudflare Pages เชื่อมกับ GitHub และสร้างเ�
 
 จากนั้นเพิ่ม Custom domain เป็น `genqr.zapm.uk` ในแท็บ **Custom domains** ของโปรเจกต์ Pages หากโดเมน `zapm.uk` ใช้ DNS ของ Cloudflare อยู่ ระบบจะสร้าง DNS record ให้ได้โดยอัตโนมัติ
 
-เอกสารทางการ: [Git integration](https://developers.cloudflare.com/pages/configuration/git-integration/), [Deploy static HTML](https://developers.cloudflare.com/pages/framework-guides/deploy-anything/), [Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/)
-
 ## ค่าใช้จ่าย
 
-โครงนี้ใช้เฉพาะ static assets จึงไม่มีค่าใช้จ่ายตามจำนวนคำขอของ Pages Functions และไม่ต้องใช้ฐานข้อมูลหรือพื้นที่เก็บไฟล์ Cloudflare ระบุว่า static asset requests บน Pages ฟรีและไม่จำกัด อย่างไรก็ตามบัญชี Free มีเพดานจำนวน build ต่อเดือนและขนาด/จำนวนไฟล์ โปรดดู [Pages limits](https://developers.cloudflare.com/pages/platform/limits/) ก่อนใช้งานขนาดใหญ่
+โครงนี้ใช้เฉพาะ static assets จึงไม่มีฐานข้อมูลหรือพื้นที่เก็บไฟล์ฝั่งแอป และไม่ต้องใช้ Pages Functions สำหรับการสร้าง QR การใช้งานพื้นฐานจึงเหมาะกับ Cloudflare Free tier มาก
 
 ค่าใช้จ่ายที่อาจเกิดขึ้นมีเพียงบริการภายนอกที่เจ้าของเลือกเพิ่มเอง เช่น ค่าโดเมน หรือการเพิ่ม API/ฐานข้อมูลในอนาคต โปรเจกต์นี้ไม่ต้องใช้สิ่งเหล่านั้นเพื่อทำงานพื้นฐาน
 
@@ -90,7 +88,7 @@ Cloudflare Pages เชื่อมกับ GitHub และสร้างเ�
 ```text
 genqr/
 ├── .github/workflows/quality.yml  # ทดสอบทุกครั้งที่เปลี่ยนโค้ด
-├── assets/logo.svg
+├── assets/logo.svg                # โลโก้แบรนด์ของเว็บไซต์ ไม่ได้ฝังใน QR
 ├── css/style.css
 ├── js/
 │   ├── app.js
