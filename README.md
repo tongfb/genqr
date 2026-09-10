@@ -8,7 +8,8 @@
 
 - สร้าง QR สำหรับ URL, ข้อความ, vCard, Email และ Phone
 - สร้าง PromptPay ตามโครง Thai QR Payment พร้อม CRC16 checksum และจำนวนเงินแบบไม่บังคับ
-- สร้าง Bitcoin URI และ Lightning Address / LNURL
+- สร้าง Bitcoin URI สำหรับ mainnet พร้อมตรวจ address checksum และจำนวน BTC แบบทศนิยมสูงสุด 8 ตำแหน่ง
+- สร้าง Lightning Address / LNURL
 - เลือกสี ลาย พื้นขาว พื้นสี หรือพื้นโปร่งใส
 - เลือกขนาด 256–1,200 px และระดับ Error Correction
 - ดาวน์โหลด PNG หรือ SVG
@@ -60,6 +61,12 @@ export const APP_CONFIG = Object.freeze({
 
 เปลี่ยนภาพแบรนด์ได้ที่ `assets/logo.svg` และ `public/favicon.svg` ข้อความอื่นในหน้าอยู่ใน `index.html`
 
+## Bitcoin QR
+
+Bitcoin tab สร้าง URI ตามรูปแบบ `bitcoin:<address>?amount=...&label=...&message=...` สำหรับ on-chain mainnet โดยรองรับ address แบบ legacy `1...`, `3...`, SegWit `bc1q...` และ Bech32m เช่น Taproot `bc1p...` พร้อมตรวจ checksum ก่อนสร้าง QR
+
+จำนวนเงินระบุเป็น BTC แบบเลขฐานสิบธรรมดา เช่น `0.00000001` สำหรับ 1 satoshi ระบบไม่รับ exponential notation เช่น `1e-8` เพื่อให้ payload ชัดเจนและเข้ากันได้กับมาตรฐาน Bitcoin URI
+
 ## Deploy ฟรีบน Cloudflare Pages
 
 Cloudflare Pages เชื่อมกับ GitHub และสร้างเว็บใหม่อัตโนมัติทุกครั้งที่ push ขึ้นสาขา `main` โดยสาขาอื่นและ Pull Request จะได้ URL ตัวอย่างแยกจากเว็บจริง
@@ -92,6 +99,7 @@ genqr/
 ├── css/style.css
 ├── js/
 │   ├── app.js
+│   ├── bitcoin.js
 │   ├── formats.js
 │   ├── promptpay.js
 │   └── qr.js
@@ -100,6 +108,9 @@ genqr/
 │   ├── favicon.svg
 │   └── robots.txt
 ├── test/
+│   ├── bitcoin.test.js
+│   ├── formats.test.js
+│   └── promptpay.test.js
 ├── config.js
 ├── index.html
 ├── package.json
@@ -108,7 +119,7 @@ genqr/
 
 ## ข้อควรระวัง
 
-QR แบบ Static แก้ข้อมูลหลังดาวน์โหลดไม่ได้ โปรดตรวจสอบ PromptPay ID, จำนวนเงิน, address และ URL แล้วทดลองสแกนด้วยแอปจริงก่อนพิมพ์หรือเผยแพร่ โดยเฉพาะ QR สำหรับการชำระเงิน
+QR แบบ Static แก้ข้อมูลหลังดาวน์โหลดไม่ได้ โปรดตรวจสอบ PromptPay ID, จำนวนเงิน, Bitcoin address และ URL แล้วทดลองสแกนด้วยแอปจริงก่อนพิมพ์หรือเผยแพร่ โดยเฉพาะ QR สำหรับการชำระเงิน
 
 ## License
 

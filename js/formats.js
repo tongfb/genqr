@@ -1,3 +1,4 @@
+import { isValidBitcoinMainnetAddress, normalizeBitcoinAmount } from "./bitcoin.js";
 import { generatePromptPayPayload } from "./promptpay.js";
 
 const required = (value, label) => {
@@ -81,22 +82,23 @@ export const QR_TYPES = [
   {
     id: "bitcoin", label: "Bitcoin", icon: "₿", description: "Bitcoin URI",
     fields: [
-      { name: "address", label: "Bitcoin address", type: "text", placeholder: "bc1q...", full: true },
-      { name: "amount", label: "จำนวน BTC (ไม่บังคับ)", type: "number", placeholder: "0.001", min: "0.00000001", step: "0.00000001" },
+      { name: "address", label: "Bitcoin mainnet address", type: "text", placeholder: "bc1q... / bc1p... / 1... / 3...", help: "ตรวจ checksum ก่อนสร้าง QR และรองรับ mainnet เท่านั้น", full: true },
+      { name: "amount", label: "จำนวน BTC (ไม่บังคับ)", type: "number", placeholder: "0.001", min: "0.00000001", step: "0.00000001", help: "กรอกเป็น BTC ทศนิยมได้สูงสุด 8 ตำแหน่ง" },
       { name: "label", label: "ป้ายกำกับ", type: "text", placeholder: "Coffee shop" },
       { name: "message", label: "ข้อความ", type: "text", placeholder: "Order #123", full: true }
     ],
     build: (v) => {
       const address = required(v.address, " Bitcoin address");
-      const query = new URLSearchParams();
-      if (v.amount) {
-        const amount = Number(v.amount);
-        if (!Number.isFinite(amount) || amount <= 0) throw new Error("จำนวน Bitcoin ต้องมากกว่า 0");
-        query.set("amount", String(amount));
+      if (!isValidBitcoinMainnetAddress(address)) {
+        throw new Error("Bitcoin address ไม่ถูกต้อง หรือไม่ใช่ mainnet");
       }
-      if (v.label) query.set("label", v.label);
-      if (v.message) query.set("message", v.message);
-      return `bitcoin:${address}${query.size ? `?${query.toString()}` : ""}`;
+
+      const params = [];
+      const amount = normalizeBitcoinAmount(v.amount);
+      if (amount) params.push(`amount=${amount}`);
+      if (v.label) params.push(`label=${encodeURIComponent(String(v.label))}`);
+      if (v.message) params.push(`message=${encodeURIComponent(String(v.message))}`);
+      return `bitcoin:${address}${params.length ? `?${params.join("&")}` : ""}`;
     }
   },
   {
