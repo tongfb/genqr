@@ -22,7 +22,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          check-latest: true
           cache: pnpm
+      - name: Verify patched Node.js 24
+        run: |
+          node -e 'const [major, minor, patch] = process.versions.node.split(".").map(Number); console.log(`Node.js v${process.versions.node}; minimum v24.22.1`); if (major !== 24 || minor < 22 || (minor === 22 && patch < 1)) process.exit(1)'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Run tests
